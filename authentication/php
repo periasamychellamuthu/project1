@@ -1,0 +1,143 @@
+<?php
+session_start();
+if(isset($_POST['s1']))
+{
+	
+$userid3=filter_input(INPUT_POST,'userid1');
+$password3=filter_input(INPUT_POST,'password1');
+if(!empty($userid3) && !empty($password3))
+{
+	$con=mysqli_connect("localhost","root","","project");
+	if(mysqli_connect_errno())
+	{
+	
+		echo "
+		<script type=\"text/javascript\">
+	   window.alert('failed to connect');
+		</script>
+	";
+	}
+	else{
+	$sql="SELECT password FROM login where userid='$userid3'";
+	if($result=mysqli_query($con,$sql))
+	{
+		
+		if($row=mysqli_fetch_row($result))
+		{		
+			if($row[0]==$password3)
+			{
+				$_SESSION['username']=$userid3;
+				header('Location:blank.php');
+			}
+			else{
+			  
+			echo "
+				<script type=\"text/javascript\">
+			   window.alert('wrong password');
+				</script>
+			";  
+			}
+		}
+		else{
+			
+			echo "
+				<script type=\"text/javascript\">
+			   window.alert('username does not exist');
+				</script>
+			";   
+		}
+	}
+	else{
+				echo "
+				<script type=\"text/javascript\">
+			   window.alert('query does not executed');
+				</script>
+			";   
+	}
+	}
+}
+else
+{
+	echo "
+	<script type=\"text/javascript\">
+   window.alert('enter all the elements in the form to enter');
+	</script>
+";
+}
+}
+
+if(isset($_POST['s2']))
+{
+	$userid1=filter_input(INPUT_POST,'userid');
+$firstname1=filter_input(INPUT_POST,'firstname');
+$lastname1=filter_input(INPUT_POST,'lastname');
+$address1=filter_input(INPUT_POST,'address');
+$phno1=filter_input(INPUT_POST,'phno');
+$pincode1=filter_input(INPUT_POST,'pincode');
+$gender1=filter_input(INPUT_POST,'gender');
+$password1=filter_input(INPUT_POST,'password');
+$files=$_FILES['image'];
+print($files['tmp_name']);
+if(!empty($userid1) && !empty($firstname1)&& !empty($lastname1)&& !empty($address1)&& !empty($phno1)&& !empty($pincode1)&& !empty($gender1)&& !empty($password1) && $_FILES['image']['name'])
+{
+	$con= new mysqli("localhost","root","","project");
+	if($con->connect_error)
+	{
+	
+		
+		echo "
+				<script type=\"text/javascript\">
+			   window.alert('sorry connection error');
+				</script>
+			";   		
+	}
+	else{
+		
+	   $image1=$files['tmp_name'];
+	   $image1=file_get_contents($image1);
+	   $image1=base64_encode($image1);
+	 
+ $sql="INSERT INTO `profile`(`userid`, `firstname`, `lastname`, `address`, `phno`, `pincode`, `gender`, `photo`) VALUES ('$userid1','$firstname1','$lastname1','$address1','$phno1','$pincode1','$gender1','$image1')";  
+	  $sql2="INSERT INTO `login`(`userid`, `password`) VALUES ('$userid1','$password1')";
+	   if($con->query($sql))
+	   {
+		  
+			   if($con->query($sql2))
+			   {
+					
+				 echo "
+				 <script type=\"text/javascript\">
+				window.alert('all elements are inserted sucessfully');
+				 </script>
+			 ";   			  
+			   }
+			   else{
+				
+					 echo "
+					 <script type=\"text/javascript\">
+					window.alert('cant upload data in login ');
+					 </script>
+				 ";   			 		  
+			   }
+		   }		  
+		 
+		    else{
+					
+					echo "
+					<script type=\"text/javascript\">
+				   window.alert('cant upload user details ');
+					</script>
+				";   	
+	   }
+	   }
+	  
+	
+}
+
+else
+{
+	    $res="please fill all the details";
+}
+
+}
+?>
